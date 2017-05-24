@@ -15,11 +15,17 @@ jobs:
       - image: ches/kafka:latest
         environment:
           ZOOKEEPER_CONNECTION_STRING: "zookeeper:2181"
-                
+
     steps:
       - checkout
       - restore_cache:
           key: tink-v1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
+      - run:
+          command: |
+            apt-get update
+            apt-get --assume-yes install apt-utils
+            apt-get --assume-yes upgrade
+            apt-get --assume-yes install libpq-dev libsnappy-dev
       - run:
           command: |
             python3 -m venv venv
@@ -34,4 +40,4 @@ jobs:
           command: |
             . venv/bin/activate
             nosetests
-      
+
